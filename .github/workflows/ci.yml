@@ -9,13 +9,18 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      matrix:
-        node: [18, 20]
+      matrix: { node: [18, 20] }   # debug için istersen geçici [18] yap
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm i -g pnpm@8
-      - run: pnpm install
-      - run: pnpm test
+        with: { node-version: ${{ matrix.node }} }
+      - name: Versions
+        run: |
+          node -v
+          npm -v
+      - name: Install
+        run: npm install
+      - name: Typecheck
+        run: npx tsc -p . --noEmit
+      - name: Test
+        run: npx jest --runInBand --verbose
